@@ -1,0 +1,273 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vikas Khanna — Advanced NPW Quiz</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;min-height:100vh;padding:20px;
+ display:flex;align-items:center;justify-content:center;
+ font-family:Arial,sans-serif;color:#f8fafc;
+ background:linear-gradient(135deg,#101323,#172e43,#402d36)
+}
+.card{
+ width:100%;max-width:720px;padding:28px;
+ background:#ffffff0c;border:1px solid #ffffff24;
+ border-radius:22px;box-shadow:0 20px 60px #0005
+}
+.tag{color:#fbbf24;font-size:12px;font-weight:bold;letter-spacing:2px}
+h1{font-size:27px;margin:12px 0 8px}
+.sub{color:#bdc9d8;line-height:1.6}
+.track{height:8px;background:#ffffff20;border-radius:8px;margin-top:24px;overflow:hidden}
+#bar{height:100%;width:0;background:#fbbf24;transition:.3s}
+.info{display:flex;justify-content:space-between;margin:12px 0;color:#cbd5e1;font-size:13px}
+h2{font-size:20px;line-height:1.55;margin-top:25px}
+#options{display:grid;gap:11px;margin:20px 0}
+.option{
+ padding:15px;text-align:left;border-radius:12px;
+ border:1px solid #ffffff30;background:#ffffff09;
+ color:white;cursor:pointer;font-size:15px;line-height:1.5
+}
+.option:hover:not(:disabled){background:#ffffff20;border-color:#fbbf24}
+.option:disabled{cursor:default}
+.correct{background:#14532d!important;border-color:#4ade80!important}
+.wrong{background:#7f1d1d!important;border-color:#fb7185!important}
+#feedback{min-height:52px;line-height:1.6;color:#e2e8f0}
+.action{
+ border:0;border-radius:10px;padding:13px 20px;
+ background:#fbbf24;color:#1c2330;font-weight:bold;
+ font-size:15px;cursor:pointer
+}
+.action:disabled{opacity:.4;cursor:not-allowed}
+.hidden{display:none}
+.result{text-align:center;padding:25px 0}
+#final{font-size:46px;color:#fbbf24;margin:20px}
+footer{font-size:12px;color:#94a3b8;margin-top:24px;line-height:1.6}
+</style>
+</head>
+<body>
+<main class="card">
+ <div class="tag">NPW • ADVANCED CHALLENGE</div>
+ <h1>Vikas Khanna: Beyond the Kitchen</h1>
+ <div class="sub">10 challenging MCQs · One correct answer per question · Instant explanations</div>
+
+ <section id="game">
+  <div class="track"><div id="bar"></div></div>
+  <div class="info">
+   <span id="progress">Question 1 of 10</span>
+   <span id="score">Score: 0</span>
+  </div>
+  <h2 id="question"></h2>
+  <div id="options"></div>
+  <p id="feedback" aria-live="polite"></p>
+  <button class="action" id="next" disabled>Next Question →</button>
+ </section>
+
+ <section id="result" class="result hidden">
+  <div class="tag">CHALLENGE COMPLETE</div>
+  <h2>Your final score</h2>
+  <div id="final"></div>
+  <h2 id="grade"></h2>
+  <p id="review"></p>
+  <button class="action" onclick="restart()">↻ Retry Quiz</button>
+ </section>
+ <footer>Advanced practice quiz. Check your assigned NPW chapter for textbook-specific details.</footer>
+</main>
+
+<script>
+const questions=[
+{
+ q:"Which combination best describes Vikas Khanna's professional identity?",
+ o:[
+  "A culinary professional who also works as an author and filmmaker",
+  "A politician whose main work is food regulation",
+  "A scientist specialising in agricultural genetics",
+  "A restaurant critic who does not cook professionally"
+ ],
+ a:0,
+ e:"Vikas Khanna is an Indian chef, restaurateur, author and filmmaker."
+},
+{
+ q:"Vikas Khanna was born in Amritsar. What is the strongest reason to study this biographical detail?",
+ o:[
+  "It proves that every dish he makes originated in Amritsar",
+  "It provides cultural and geographical context for understanding his background",
+  "It establishes that he never worked outside Punjab",
+  "It proves that birthplace alone determines professional success"
+ ],
+ a:1,
+ e:"Biographical context can help explain cultural influences, but birthplace alone cannot establish every influence on a person's career."
+},
+{
+ q:"How can a chef's use of Indian culinary traditions in an international setting best be interpreted?",
+ o:[
+  "As proof that traditional recipes must never change",
+  "As a rejection of cultural identity",
+  "As a way to communicate cultural heritage to different audiences",
+  "As evidence that all international cuisines are identical"
+ ],
+ a:2,
+ e:"Cuisine can communicate heritage across cultures, while chefs may adapt presentation or technique for different audiences."
+},
+{
+ q:"Which conclusion about professional recognition is the most logically defensible?",
+ o:[
+  "Awards guarantee that every dish will appeal to every diner",
+  "Recognition can indicate achievement, but it does not measure every aspect of a person's work",
+  "Recognition makes continued learning unnecessary",
+  "Recognition proves that no other chef has comparable skills"
+ ],
+ a:1,
+ e:"Awards and recognition provide evidence of particular achievements, not universal superiority or guaranteed future success."
+},
+{
+ q:"Why might a chef write cookbooks in addition to working in restaurants?",
+ o:[
+  "To make culinary knowledge and techniques accessible to a wider audience",
+  "To ensure readers never need to practise cooking",
+  "To replace every culinary tradition with one standard method",
+  "To eliminate the need for ingredients"
+ ],
+ a:0,
+ e:"Cookbooks allow recipes, methods and culinary ideas to reach readers beyond a restaurant's customers."
+},
+{
+ q:"Which approach best demonstrates the relationship between food and cultural identity?",
+ o:[
+  "Treating food as having no connection to history",
+  "Assuming every person from one region eats the same dishes",
+  "Studying ingredients, techniques and traditions within their cultural context",
+  "Judging a culture exclusively by the cost of its restaurants"
+ ],
+ a:2,
+ e:"Food traditions reflect history, geography, ingredients and community practices, while individuals within a culture still differ."
+},
+{
+ q:"If a chef adapts a traditional dish for a new audience, which question is most useful for evaluating the adaptation?",
+ o:[
+  "Is the new version automatically better because it is newer?",
+  "Does the adaptation balance accessibility with respect for the dish's cultural roots?",
+  "Does the dish have the longest possible name?",
+  "Has the original dish become completely irrelevant?"
+ ],
+ a:1,
+ e:"A thoughtful adaptation considers its audience while recognising the cultural meaning and history of the original."
+},
+{
+ q:"Which skill combination is most useful for building a sustainable culinary career?",
+ o:[
+  "Technical skill alone, without communication or discipline",
+  "Popularity alone, without consistency",
+  "Creativity, technical competence, adaptability and perseverance",
+  "Avoiding feedback and refusing to learn new methods"
+ ],
+ a:2,
+ e:"Culinary work combines practical execution with creativity, collaboration, adaptability and continuous learning."
+},
+{
+ q:"What is the most reliable way to distinguish a fact from an interpretation in a biography?",
+ o:[
+  "Accept every statement because it appears in a biography",
+  "Treat opinions and dates as equally verifiable",
+  "Check factual claims against reliable evidence and label interpretations accordingly",
+  "Replace evidence with assumptions about the person's personality"
+ ],
+ a:2,
+ e:"Dates and documented events can be checked against sources; claims about meaning or motivation may require interpretation."
+},
+{
+ q:"Which statement best captures the broader significance of studying a chef's life and work?",
+ o:[
+  "A chef's career can illustrate how culture, skill, creativity and professional choices interact",
+  "One chef's experience proves that all careers follow the same path",
+  "Culinary success depends only on fame",
+  "A biography is useful only for memorising dates"
+ ],
+ a:0,
+ e:"A biography can reveal connections among personal background, professional development and cultural contribution without suggesting that every career is identical."
+}
+];
+
+let current=0,points=0,locked=false,missed=[];
+
+function render(){
+ locked=false;
+ const q=questions[current];
+ document.getElementById("progress").textContent=
+  `Question ${current+1} of ${questions.length}`;
+ document.getElementById("score").textContent=`Score: ${points}`;
+ document.getElementById("bar").style.width=
+  `${current/questions.length*100}%`;
+ document.getElementById("question").textContent=q.q;
+ document.getElementById("feedback").textContent="";
+ document.getElementById("next").disabled=true;
+ document.getElementById("next").textContent=
+  current===questions.length-1?"View Results →":"Next Question →";
+
+ const area=document.getElementById("options");
+ area.innerHTML="";
+ q.o.forEach((text,i)=>{
+  const b=document.createElement("button");
+  b.className="option";
+  b.textContent=String.fromCharCode(65+i)+". "+text;
+  b.onclick=()=>answer(i);
+  area.appendChild(b);
+ });
+}
+
+function answer(choice){
+ if(locked)return;
+ locked=true;
+ const q=questions[current];
+ const buttons=document.querySelectorAll(".option");
+ buttons.forEach(b=>b.disabled=true);
+ buttons[q.a].classList.add("correct");
+
+ if(choice===q.a){
+  points++;
+  document.getElementById("feedback").textContent="✓ Correct! "+q.e;
+ }else{
+  missed.push(current);
+  buttons[choice].classList.add("wrong");
+  document.getElementById("feedback").textContent=
+   "✗ Correct answer: "+q.o[q.a]+". "+q.e;
+ }
+ document.getElementById("score").textContent=`Score: ${points}`;
+ document.getElementById("next").disabled=false;
+}
+
+document.getElementById("next").onclick=()=>{
+ if(!locked)return;
+ current++;
+ if(current<questions.length)render();
+ else finish();
+};
+
+function finish(){
+ document.getElementById("game").classList.add("hidden");
+ document.getElementById("result").classList.remove("hidden");
+ document.getElementById("bar").style.width="100%";
+ document.getElementById("final").textContent=
+  `${points} / ${questions.length}`;
+ document.getElementById("grade").textContent=
+  points>=9?"Outstanding! 🏆":
+  points>=7?"Very good work! 🌟":
+  points>=5?"Good effort — review the explanations. 📚":
+  "Keep practising and try again! 💪";
+ document.getElementById("review").textContent=
+  `${questions.length-missed.length} correct · ${missed.length} incorrect.`;
+}
+
+function restart(){
+ current=0;points=0;missed=[];
+ document.getElementById("game").classList.remove("hidden");
+ document.getElementById("result").classList.add("hidden");
+ render();
+}
+render();
+</script>
+</body>
+</html>
